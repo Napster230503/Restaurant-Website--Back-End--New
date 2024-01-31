@@ -1,0 +1,36 @@
+body {
+  overflow-x: hidden;
+}
+
+.carousel {
+  width: 950px;
+}
+
+.collapse ul li a {
+  color: #f48901;
+}
+
+/* .tombol {
+  margin-left: 570px;
+} */
+.aplication .card .row .col p {
+  font-size: x-large;
+}
+
+section .para {
+  margin-top: 100px;
+}
+
+/* .footer .row .col ul li a:hover {
+  text-decoration: dashed;
+} */
+
+@media all and (max-width: 576px) {
+  .carousel {
+    width: 450px;
+  }
+
+  section .para {
+    margin-top: 45px;
+  }
+}

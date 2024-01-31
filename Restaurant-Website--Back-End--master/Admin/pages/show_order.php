@@ -1,0 +1,111 @@
+<?php
+require_once "../conection.php";
+$con = db_connect();
+$code = mysqli_real_escape_string($con, $_GET["id"]);
+$sql = "SELECT * FROM order_detail WHERE order_id = '$code'";
+$sql2 = "SELECT * FROM order_detail JOIN menu ON  order_detail.menu_id = menu.menu_id";
+$sql3 = "SELECT * FROM order_detail JOIN orders ON order_detail.order_id = orders.order_id JOIN menu ON order_detail.menu_id = menu.menu_id order by 'order_id' desc limit 1";
+$sql4 = "SELECT * FROM menu JOIN category ON menu.category_id = category.category_id";
+$result = mysqli_query($con, $sql);
+$result2 = mysqli_query($con, $sql2);
+$result3 = mysqli_query($con, $sql3);
+$result4 = mysqli_query($con, $sql4);
+while($data = mysqli_fetch_assoc($result)) {
+    $order = $data['order_id'];
+    $menu = $data['menu_id'];
+    $qty = $data['jumlah'];
+    $tanggalPesan = $data['order_date'];
+    $jumlah = $data['Total_price'];
+}
+
+session_start();
+if(!isset($_SESSION['masuk'])){
+  header("Location: login.php");
+  exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - FS Resto</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+    <link href="../../resource/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+  </head>
+
+  <body class="sb-nav-fixed">
+   <?=
+      include 'partIndex/navbar.php';
+   ?>
+
+    <div id="layoutSidenav">
+      <div id="layoutSidenav_nav">
+       <?=
+        include 'sideNavbar.php';
+       ?>
+      </div>
+      <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Orders</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Information</li>
+                        </ol>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                            Detail Data<br/>
+                        </div>
+                        <div class="card-body">
+                            <p>Order Code : <?php echo $code; ?></p>
+                            <p>Tanggal pesan: <?php echo $tanggalPesan?></p>
+                            <p></p>
+                            <p></p>
+                            <div class="row">
+                                <table class="table table-hover">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Pelanggan</th>
+                                        <th>Pegawai yang melayani</th>
+                                        <th>Menu</th>
+                                        <th>Jumlah pesan</th>
+                                    </tr>
+                                <?php
+                                    $no = 1;
+                                    while($data = mysqli_fetch_assoc($result3)) {
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $no++;?></td>
+                                            <td><?php echo $data['cust_id']; ?></td>
+                                            <td><?php echo $data['emp_id'] ;?></td>
+                                            <td><?php echo $data['menu_id'] . " - " . $data['menu_name']?></td>
+                                            <td><?php echo $data["jumlah"];?></td>
+                                            
+                                        </tr>
+                                        <?php
+                                    }
+                                ?>
+                                </table>
+                                <?php echo "<strong>Total : Rp. " . number_format($jumlah,0) . "</strong>";?>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+           
+       <?=
+          include 'partIndex/footer.php';
+       ?>
+      </div>
+    </div>
+    <?=
+      include_once 'partIndex/script.php';
+    ?>
+  </body>
+</html>
+<?php
+    db_disconnect($con);
+?>
